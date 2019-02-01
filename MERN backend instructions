@@ -1,0 +1,119 @@
+Backend creation (MERN)
+
+Once the front end is set up with the minumum (states, as well and input forms) 
+
+cd ..
+(we dont put the backend in the same directory as react components)
+mkdir backend && cd backend
+npm init -y
+(this creates a .JSON directory)
+npm install express body-parser cors mongoose
+(after install we need nodemon which automatically restarts the DB server when changes happen)
+sudo npm install -g nodemon
+(use sudo for any global installs as it effects root being global)
+touch server.js
+code .
+
+// here we are simply creating the instances of the middleware and backend tech to be used
+ 
+const express = require('express');
+const app = express(); 
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const PORT = 4000;
+
+//here we are calling express and telling it to begin using the middleware functionality
+
+app.use(cors());
+app.use(bodyParser.json());
+//When the backend is active, it will be logged with the active port number
+
+app.listen(PORT, function(){
+    console.log("Server is running, Port: " + PORT);
+});
+
+(next open the integrated terminal in VSCode)
+nodemon server
+(this command tells nodemon to run the file and the server will start running on port 4000)
+
+install mongoDb (done)
+mongod (or sudo service mongod)
+mongo
+(this accesses the mongoDB shell which is used to create tables)
+use todos
+(this will create a 'todos' table and mongodb will write any new information to that)
+(keep this running. the port is 27017)
+
+
+
+Here is the new server file: 
+// here we are simply creating the instances of the middleware and backend tech to be used 
+const express = require('express');
+const app = express(); 
+const bodyParser = require('body-parser');
+const cors = require('cors');
+//bring in Mongoose after setting up and running the mongoDB shell and have it running n bg
+const mongoose = require('mongoose');
+const PORT = 4000;
+
+
+//here we are calling express and telling it to begin using the middleware functionality
+app.use(cors());
+app.use(bodyParser.json());
+//this creates the connection to mongoDB  'todos' (the database itself)
+mongoose.connect('mongodb://127.0.0.1:27017/todos', { useNewUrlParser: true});
+//reference to the connection to mongo
+const connection = mongoose.connection;
+
+//this will log whether or not our backend has made the connection to mongo
+connection.once('open', function(){
+    console.log("MongoDB database connection is established successfully");
+})
+
+//When the backend is active, it will be logged with the active port number
+app.listen(PORT, function(){
+    console.log("Server is running, Port: " + PORT);
+});
+
+
+
+(next create the scheme file)
+(new file)
+todo.model.js 
+
+const mongoose = require('mongoose');
+//Creates a connection to mongoose schemas
+const Schema = mongoose.Schema;
+
+
+let Todo = new Schema({
+    todo_description: {
+        type: String
+    },
+    todo_responsible: {
+        type: String
+    },
+    todo_priority: {
+        type: String
+    },
+    todo_completed: {
+        type: Boolean
+    }
+});
+//The schema has to be exported;
+//We have now set up the database model (the same as the ones made withing React)
+//now we create a reference for exporting. This will refer to Todo. It enables us to 
+//add data to the DB and import data as well. 
+//'Todo' refers to the Mongo DB. Todo refers to the schema we just created.  
+module.exports = mongoose.model('Todo', Todo);
+
+
+
+(next we will return to the server.js file)
+
+
+
+
+
+
+
